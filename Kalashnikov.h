@@ -13,18 +13,23 @@ typedef struct {
     Card hand[4];
 }Player;
 
-/*extern Card deck[52];
-extern Card *militaryGarbage[];
-extern Card *shelf[];
-extern Card *discard[];*/
+extern Card *deck;
+extern Card **garbage;
+extern Card **shelf;
+extern Card **discard;
 extern int garbagesize, shelfsize, discardsize;
+extern Player boris, vadim;
 
 // garbage is pile 1, shelf is pile 2, discard is pile 3
 Card *createDeck();
-Card **createPile(Card **d);
+Card **createPile();
+Card **initGarbage(Card **p, Card *d);
 
 Card **addToPile(Card **p, Card *c, int pilenum);
 Card **removeFromPile(Card **p, Card *c, int pilenum);
 
 void dispCard(Card *c);
 void dispPile(Card **p, int pilenum);
+
+Player *createPlayer();
+void givePlayer(Player *p, int pindx, int num);

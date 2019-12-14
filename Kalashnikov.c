@@ -1,18 +1,24 @@
 #include "Kalashnikov.h"
 
-int garbagesize = 1;
-int shelfsize = 1;
-int discardsize = 1;
+int garbagesize = 0;
+int shelfsize = 0;
+int discardsize = 0;
+
+Card *deck;
+Card **garbage;
+Card **shelf;
+Card **discard;
+
+Player boris, vadim;
 
 int main(){
-	Card *cardDeck = createDeck();
-	Card **garbage = createPile(&cardDeck);
-	garbage = addToPile(garbage, cardDeck+1, 1);
+	deck = createDeck();
+	garbage = createPile(deck);
+	garbage = (Card**) initGarbage(garbage, deck);
 	dispPile(garbage, 1);
-	printf("%d\n", garbagesize);
-	garbage = removeFromPile(garbage, cardDeck+1, 1);
-	dispPile(garbage, 1);
-	printf("%d\n", garbagesize);
+	Player *b = createPlayer();
+	Player *v = createPlayer();
+	printf("%d\n", b->health);
 	return 0;
 }
 
@@ -30,9 +36,8 @@ Card *createDeck(){
 	return deck;
 }
 
-Card **createPile(Card **d){
+Card **createPile(){
 	Card **temp = (Card**) malloc(sizeof(Card*));
-	*temp = *d;
 	return temp;
 }
 
@@ -56,6 +61,9 @@ Card **addToPile(Card **p, Card *c, int pilenum){
 	}
 	s += 1;
 	Card **temp =  (Card **) malloc(s*sizeof(Card*));
+	if (temp == NULL){
+		exit(11);
+	}
 	for (int i = 0; i<s; i++){
 		if (i == s-1){
 			*(temp+i) = c;
@@ -165,4 +173,36 @@ void dispPile(Card **p, int pilenum){
 	for (int i = 0; i<s; i++){
 		dispCard(*(p+i));
 	}
+}
+
+Card **initGarbage(Card **p, Card *d){
+	for (int i = 0; i<52; i++){
+		if (i==0){
+			*p = d;
+			garbagesize = 1;
+			continue;
+		}
+		p = addToPile(p, d+i, 1);
+	}
+	garbagesize = 52;
+	return p;
+}
+
+void givePlayer(Player *p, int pindx, int num){
+	p->hand[pindx] = **(garbage + num);
+	garbage = removeFromPile(garbage, *(garbage + num), 1);
+}
+
+Player *createPlayer(){
+	Player *pl;
+	pl = &boris;
+	if (pl->health != 20){
+		pl = &vadim;
+	}
+	pl->health = 20;
+	int cno = rand() % garbagesize;
+	for (int i = 0; i<4; i++){
+		givePlayer(pl, i, cno);
+	}
+	return pl;
 }
