@@ -12,25 +12,41 @@ Card **discard;
 Player boris, vadim;
 
 int main(){
+	srand(time(NULL));
 	deck = createDeck();
 	garbage = createPile(deck);
 	garbage = (Card**) initGarbage(garbage, deck);
 	dispPile(garbage, 1);
 	printf("%d\n",garbagesize);
-	int *ognums = (int *) malloc(8*sizeof(int));
+	int *ognums = (int *) malloc(52 * sizeof(int));
 	for (int i = 0; i<52; i++){
 		*(ognums+i) = i+1;
 	}
 	printf("Created\n");
 	shuffle(ognums, 52);
-	printf("Shuffled\n");
+	printf("Shuffled %d\n", *ognums);
 	Player *b = createPlayer(ognums);
 	Player *v = createPlayer(ognums+4);
 	printf("Player created\n");
 	printf("%d\n",garbagesize);
 	printf("%d\n",isKalashnikov(b));
-	int cardidx = userPromptSwapCard(b);
-	printf("Your card index was %d.\n", cardidx);
+	int cardidx;
+	Player *currplayer;
+	int turn = 0;
+	while (b->health > 0 && v->health > 0){
+		currplayer = (turn%2 == 0) ? b:v;
+		cardidx = userPromptSwapCard(currplayer);
+		printf("Your card index to be swapped was %d.\n", cardidx);
+		if (cardidx == 5){
+			currplayer->health = 0;
+			continue;
+		}
+		getFromPlayer(currplayer, cardidx);
+		givePlayer(currplayer, cardidx, rand()%garbagesize);
+		turn++;
+	}
+	char *victor = (v->health == 0) ? "King Boris": "Vadim Blyat";
+	printf("%s was the victor.\n", victor);
 	return 0;
 }
 
@@ -224,17 +240,18 @@ void shuffle(int *array, size_t n){
     }
 }
 
+// Commented out part tests if Kalashnikov detector works
 Player *createPlayer(int *nums){
 	Player *pl;
-	int n[] = {12,6,3,0};
+	//int n[] = {12,6,3,0};
 	pl = &boris;
 	if (pl->health == 20){
 		pl = &vadim;
 	}
 	pl->health = 20;
 	for (int i = 0; i<4; i++){
-		//givePlayer(pl, i, *(nums+i));
-		givePlayer(pl, i, *(n+i));
+		givePlayer(pl, i, *(nums+i));
+		//givePlayer(pl, i, *(n+i));
 	}
 	return pl;
 }
