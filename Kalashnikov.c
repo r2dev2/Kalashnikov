@@ -30,19 +30,34 @@ int main(){
 	printf("Player created\n");
 	printf("%d\n",garbagesize);
 	printf("%d\n",isKalashnikov(b));
+
+	// Actual round
 	int cardidx;
 	Player *currplayer;
+	Player *opponentplayer;
 	int turn = 0;
+	char *playername;
 	while (b->health > 0 && v->health > 0){
+		for (int i = 0; i<20; i++){
+			printf("\n\n");
+		}
+		playername = (turn%2 == 0) ? "King Boris": "Vadim Blyat";
 		currplayer = (turn%2 == 0) ? b:v;
+		opponentplayer = (turn%2 == 0) ? v:b;
+		printf("Current Player: %s Health: %d\n", playername, currplayer->health);
 		cardidx = userPromptSwapCard(currplayer);
 		printf("Your card index to be swapped was %d.\n", cardidx);
 		if (cardidx == 5){
 			currplayer->health = 0;
+			printf("%s, what a debil.\n", playername);
 			continue;
 		}
 		getFromPlayer(currplayer, cardidx);
 		givePlayer(currplayer, cardidx, rand()%garbagesize);
+		if (isKalashnikov(currplayer)==1){
+			opponentplayer->health = opponentplayer->health - 20;
+			printf("%s built his Kalashnikov\n", playername);
+		}
 		turn++;
 	}
 	char *victor = (v->health == 0) ? "King Boris": "Vadim Blyat";
