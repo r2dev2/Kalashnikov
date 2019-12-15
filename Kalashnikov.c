@@ -16,9 +16,21 @@ int main(){
 	garbage = createPile(deck);
 	garbage = (Card**) initGarbage(garbage, deck);
 	dispPile(garbage, 1);
-	Player *b = createPlayer();
-	Player *v = createPlayer();
-	printf("%d\n", b->health);
+	printf("%d\n",garbagesize);
+	int *ognums = (int *) malloc(8*sizeof(int));
+	for (int i = 0; i<52; i++){
+		*(ognums+i) = i+1;
+	}
+	printf("Created\n");
+	shuffle(ognums, 52);
+	printf("Shuffled\n");
+	Player *b = createPlayer(ognums);
+	Player *v = createPlayer(ognums+4);
+	printf("Player created\n");
+	printf("%d\n",garbagesize);
+	printf("%d\n",isKalashnikov(b));
+	int cardidx = userPromptSwapCard(b);
+	printf("Your card index was %d.\n", cardidx);
 	return 0;
 }
 
@@ -114,7 +126,10 @@ Card **removeFromPile(Card **p, Card *c, int pilenum){
 		*(temp+tempidx) = *(p+i);
 		tempidx++;
 	}
-	free(p);
+	// Throwing an error, TODO fix later
+	/*if (p != NULL){
+		free(p);
+	}*/
 	return temp;
 }
 
@@ -169,6 +184,8 @@ void dispPile(Card **p, int pilenum){
 		case 3:
 			s = discardsize;
 			break;
+		case 4:
+			s = 4;
 	}
 	for (int i = 0; i<s; i++){
 		dispCard(*(p+i));
@@ -189,20 +206,83 @@ Card **initGarbage(Card **p, Card *d){
 }
 
 void givePlayer(Player *p, int pindx, int num){
-	p->hand[pindx] = **(garbage + num);
+	p->hand[pindx] = *(garbage + num);
 	garbage = removeFromPile(garbage, *(garbage + num), 1);
 }
 
-Player *createPlayer(){
+void shuffle(int *array, size_t n){
+    if (n > 1) 
+    {
+        size_t i;
+        for (i = 0; i < n - 1; i++) 
+        {
+          size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
+          int t = array[j];
+          array[j] = array[i];
+          array[i] = t;
+        }
+    }
+}
+
+Player *createPlayer(int *nums){
 	Player *pl;
+	int n[] = {12,6,3,0};
 	pl = &boris;
-	if (pl->health != 20){
+	if (pl->health == 20){
 		pl = &vadim;
 	}
 	pl->health = 20;
-	int cno = rand() % garbagesize;
 	for (int i = 0; i<4; i++){
-		givePlayer(pl, i, cno);
+		//givePlayer(pl, i, *(nums+i));
+		givePlayer(pl, i, *(n+i));
 	}
 	return pl;
+}
+
+void getFromPlayer(Player *p, int pindx){
+	if (discardsize == 0){
+		discard = createPile();
+		discardsize = 1;
+		*discard = p->hand[pindx];
+	} else {
+		discard = addToPile(discard, p->hand[pindx], 2);
+	}
+	p->hand[pindx] = NULL;
+}
+
+int userPromptSwapCard(Player *p){
+	int idx;
+	printf("Your hand currently has 4 cards:\n");
+	dispPile(p->hand, 4);
+	printf("Which Card would you like to swap (int from 0-4)\n");
+	scanf("%d", &idx);
+	return idx;
+}
+
+int isKalashnikov(Player *p){
+	int ace = 0;
+	int king = 0;
+	int four = 0;
+	int seven = 0;
+	int s;
+	for (int i = 0; i<4; i++){
+		s = (*(p->hand[i])).number;
+		switch (s){
+			case 1:
+				ace = 1;
+				break;
+			case 13:
+				king = 1;
+				break;
+			case 4:
+				four = 1;
+				break;
+			case 7:
+				seven = 1;
+				break;
+			default:
+				break;
+		}
+	}
+	return (ace+king+four+seven) == 4;
 }
