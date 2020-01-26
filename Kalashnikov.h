@@ -3,6 +3,7 @@
 #include <time.h>
 
 void shuffle(int *array, size_t n);
+void printNewLine();
 
 /*  Ace is 1, Jack is 11, Queen is 12, King is 13
     Clubs is 1, Spades is 2, Hearts is 3, Diamonds is 4  */
@@ -40,3 +41,5 @@ void getFromPlayer(Player *p, int pindx);
 
 int userPromptSwapCard(Player *p);
 int isKalashnikov(Player *p);
+
+void writeToFile(Card **p);

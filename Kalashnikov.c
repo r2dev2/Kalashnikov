@@ -3,6 +3,7 @@
 int garbagesize = 0;
 int shelfsize = 0;
 int discardsize = 0;
+int ac;
 
 Card *deck;
 Card **garbage;
@@ -11,25 +12,26 @@ Card **discard;
 
 Player boris, vadim;
 
-int main(){
+int main(int argc, char* argv[]){
+	ac = argc;
 	srand(time(NULL));
 	deck = createDeck();
 	garbage = createPile(deck);
 	garbage = (Card**) initGarbage(garbage, deck);
-	dispPile(garbage, 1);
-	printf("%d\n",garbagesize);
+	// dispPile(garbage, 1);
+	// printf("%d\n",garbagesize);
 	int *ognums = (int *) malloc(52 * sizeof(int));
 	for (int i = 0; i<52; i++){
 		*(ognums+i) = i+1;
 	}
-	printf("Created\n");
+	// printf("Created\n");
 	shuffle(ognums, 52);
-	printf("Shuffled %d\n", *ognums);
+	// printf("Shuffled %d\n", *ognums);
 	Player *b = createPlayer(ognums);
 	Player *v = createPlayer(ognums+4);
-	printf("Player created\n");
-	printf("%d\n",garbagesize);
-	printf("%d\n",isKalashnikov(b));
+	// printf("Player created\n");
+	// printf("%d\n",garbagesize);
+	// printf("%d\n",isKalashnikov(b));
 
 	// Actual round
 	int cardidx;
@@ -38,15 +40,20 @@ int main(){
 	int turn = 0;
 	char *playername;
 	while (b->health > 0 && v->health > 0){
-		for (int i = 0; i<20; i++){
-			printf("\n\n");
+		if (argc == 1){
+			for (int i = 0; i<20; i++){
+				printf("\n\n");
+			}
 		}
 		playername = (turn%2 == 0) ? "King Boris": "Vadim Blyat";
 		currplayer = (turn%2 == 0) ? b:v;
 		opponentplayer = (turn%2 == 0) ? v:b;
-		printf("Current Player: %s Health: %d\n", playername, currplayer->health);
+		writeToFile(currplayer->hand);
+		printf("Current Player: %s Health: %d ", playername, currplayer->health);
+		printNewLine();
 		cardidx = userPromptSwapCard(currplayer);
-		printf("Your card index to be swapped was %d.\n", cardidx);
+		printf("Your card index to be swapped was %d. ", cardidx);
+		printNewLine();
 		if (cardidx == 5){
 			currplayer->health = 0;
 			printf("%s, what a debil.\n", playername);
@@ -58,11 +65,29 @@ int main(){
 			opponentplayer->health = opponentplayer->health - 20;
 			printf("%s built his Kalashnikov\n", playername);
 		}
+		printf("\n");
 		turn++;
 	}
 	char *victor = (v->health == 0) ? "King Boris": "Vadim Blyat";
 	printf("%s was the victor.\n", victor);
 	return 0;
+}
+
+void writeToFile(Card **p){
+	char move[100];
+	for (int i = 0; i < 4; i++){
+		sprintf(move, "%s\n(%d,%d)", move, (**(p+i)).number, (**(p+i)).suit);
+	}
+	FILE *fp;
+	fp = fopen("/home/rbadhe/KalashnikovBackend/move.txt", "w+");
+	fputs(move, fp);
+	fclose(fp);
+}
+
+void printNewLine(){
+	if (ac == 1){
+		printf("\n");
+	}
 }
 
 Card *createDeck(){
@@ -198,7 +223,8 @@ void dispCard(Card *c){
 			printf(" of Diamonds");
 			break;
 	}
-	printf("\n");
+	printf(" ");
+	printNewLine();
 }
 
 void dispPile(Card **p, int pilenum){
@@ -284,9 +310,13 @@ void getFromPlayer(Player *p, int pindx){
 
 int userPromptSwapCard(Player *p){
 	int idx;
-	printf("Your hand currently has 4 cards:\n");
+	printf("Your hand currently has 4 cards: ");
+	printNewLine();
 	dispPile(p->hand, 4);
 	printf("Which Card would you like to swap (int from 0-4)\n");
+	// if (ac == 1){
+	// 	printf("\n");
+	// }
 	scanf("%d", &idx);
 	return idx;
 }
