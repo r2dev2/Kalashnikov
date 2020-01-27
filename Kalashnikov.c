@@ -69,6 +69,12 @@ int main(int argc, char* argv[]){
 		turn++;
 	}
 	char *victor = (v->health == 0) ? "King Boris": "Vadim Blyat";
+	char strvictor[50];
+	sprintf(strvictor, "\n%s was the victor.\n", victor);
+	FILE *fp;
+	fp = fopen("move.txt", "w+");
+	fputs(strvictor, fp);
+	fclose(fp);
 	printf("%s was the victor.\n", victor);
 	return 0;
 }
@@ -79,7 +85,7 @@ void writeToFile(Card **p){
 		sprintf(move, "%s\n(%d,%d)", move, (**(p+i)).number, (**(p+i)).suit);
 	}
 	FILE *fp;
-	fp = fopen("/home/rbadhe/KalashnikovBackend/move.txt", "w+");
+	fp = fopen("move.txt", "w+");
 	fputs(move, fp);
 	fclose(fp);
 }

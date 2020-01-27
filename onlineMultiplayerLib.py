@@ -44,7 +44,7 @@ def client_receive(server: io) -> None:
         if msg is None:
             sleep(1)
             continue
-        if "KA(U)" in msg or "KB(U)" in msg:
+        if "KA(U)" in msg or "KB(U)" in msg or "*" in msg:
             continue
         print(f"{name} sent you a message: {msg}")
 
