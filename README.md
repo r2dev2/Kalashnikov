@@ -1,9 +1,12 @@
 # Kalashnikov Text Based
 
-# Build
+# Setup
 To build on UNIX-based systems, execute
 
+``mkdir bin``
 ``make``
+
+To use a pre-existing binary, create a bin folder and extract a binary from releases to the bin folder
 
 
 # Execution
