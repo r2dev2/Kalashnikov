@@ -1,5 +1,6 @@
 from subprocess import *
 from os import getcwd, remove
+from platform import platform
 from time import sleep
 
 from KalashnikovClient import put, get
@@ -7,9 +8,16 @@ from onlineMultiplayerLib import other_user
 from IO import io
 
 def main() -> None:
-    remove(getcwd() + "/move.txt")
+    move = getcwd() + "/move.txt"
+    Kalash = getcwd() + "/bin/Kalashnikov"
+    if platform() == "Windows":
+        move = getcwd() + "\move.txt"
+        Kalash = getcwd() + "\\bin\Kalashnikov"
+    with open(move, "w+") as fout:
+        fout.write("Hello World")
+    remove(move)
     kalashnikov = Popen(
-        [getcwd() + "/Kalashnikov", "nospace"],
+        [Kalash, "nospace"],
         stdin = PIPE,
         stdout = PIPE,
         stderr = PIPE

@@ -3,11 +3,13 @@ __pycache__/
 
 # Various
 *.txt
+.vscode
 
 # Prerequisites
 *.d
 
 # Binaries
+bin/
 Kalashnikov
 
 # Object files
