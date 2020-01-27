@@ -12,7 +12,7 @@ def main() -> None:
     Kalash = getcwd() + "/bin/Kalashnikov"
     if platform() == "Windows":
         move = getcwd() + "\move.txt"
-        Kalash = getcwd() + "\\bin\Kalashnikov"
+        Kalash = getcwd() + "\\bin\Kalashnikov.exe"
     with open(move, "w+") as fout:
         fout.write("Hello World")
     remove(move)
