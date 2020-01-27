@@ -32,6 +32,8 @@ def host(server: io, k: Popen) -> None:
         if current != prev:
             if "victor" in current:
                 print(current, flush = True)
+                server.tell("guestKA", current)
+                server.tell("guestKB", current)
                 exit(0)
             print("Interacting with Kalashnikov process", flush = True)
             prev = current
